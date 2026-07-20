@@ -1,0 +1,6 @@
+{
+  "name": "パーソナルジムON",
+  "description": "千葉県茂原市にある、シンプルで洗練された北欧・モダンテイストのパーソナルジム「ON（オン）」のホームページ。通いやすい3つの安心スタンスと、寄り添う2人のトレーナーを紹介する、優しく清潔感あふれるサイトです。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
