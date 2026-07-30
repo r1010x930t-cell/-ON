@@ -7,9 +7,6 @@ const TARGET_IMAGE = {
   alt: "Personal Gym ON Training Area"
 };
 
-// 単一画像の無限シームレスロール用
-const LOOP_IMAGES = [TARGET_IMAGE, TARGET_IMAGE];
-
 export default function Hero() {
   const handleScrollToContact = () => {
     const element = document.getElementById('contact');
@@ -29,32 +26,15 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-16 md:py-24 select-none">
-      {/* Background Continuous Seamless Roll Carousel */}
+      {/* Background Static Image */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.div
-          className="flex h-full w-[200vw]"
-          animate={{ x: ['0vw', '-100vw'] }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: 'loop',
-              duration: 25, // 25 seconds for continuous seamless roll
-              ease: 'linear',
-            },
-          }}
-        >
-          {LOOP_IMAGES.map((image, index) => (
-            <div key={index} className="w-[100vw] h-full flex-shrink-0 relative">
-              <img 
-                src={image.url}
-                alt={image.alt}
-                className="w-full h-full object-cover object-center filter brightness-95"
-                referrerPolicy="no-referrer"
-                draggable={false}
-              />
-            </div>
-          ))}
-        </motion.div>
+        <img 
+          src={TARGET_IMAGE.url}
+          alt={TARGET_IMAGE.alt}
+          className="w-full h-full object-cover object-[75%_center] sm:object-[70%_center] md:object-center filter brightness-95"
+          referrerPolicy="no-referrer"
+          draggable={false}
+        />
 
         {/* Modern lighter overlay for clearer background photo */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/50 to-transparent md:bg-gradient-to-r md:from-white/75 md:via-white/40 md:to-transparent z-10 pointer-events-none"></div>
