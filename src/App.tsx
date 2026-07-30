@@ -3,6 +3,8 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Trainers from './components/Trainers';
+import PlansAndPricing from './components/PlansAndPricing';
+import Reviews from './components/Reviews';
 import Blog from './components/Blog';
 import BlogPage from './components/BlogPage';
 import Access from './components/Access';
@@ -71,8 +73,14 @@ export default function App() {
         {/* Trainers Panel */}
         <Trainers />
 
+        {/* Plans & Pricing Section */}
+        <PlansAndPricing />
+
         {/* Contacting Form & Success modal */}
         <ContactForm />
+
+        {/* Member Reviews */}
+        <Reviews />
 
         {/* Staff Blog Section */}
         <Blog onNavigateToBlog={handleNavigateToBlog} />
@@ -122,6 +130,7 @@ export default function App() {
             <div className="flex flex-wrap justify-center gap-6 text-sm text-emerald-100/90 font-medium">
               <a href="#features" className="hover:text-amber-300 transition">特徴</a>
               <a href="#trainers" className="hover:text-amber-300 transition">トレーナー</a>
+              <a href="#reviews" className="hover:text-amber-300 transition">クチコミ</a>
               <a href="#pricing" className="hover:text-amber-300 transition">料金</a>
               <a href="#contact" className="hover:text-amber-300 transition">ご予約</a>
               <button onClick={handleNavigateToBlog} className="hover:text-amber-300 transition cursor-pointer">ブログ</button>

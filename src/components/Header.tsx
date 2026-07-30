@@ -85,6 +85,12 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
               料金
             </button>
             <button 
+              onClick={() => scrollToSection('reviews')}
+              className="hover:text-brand-olive transition py-2 cursor-pointer"
+            >
+              クチコミ
+            </button>
+            <button 
               onClick={() => onNavigateToBlog ? onNavigateToBlog() : scrollToSection('blog')}
               className="hover:text-brand-olive transition py-2 cursor-pointer"
             >
@@ -175,6 +181,12 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                 className="text-left py-2.5 border-b border-gray-50 hover:text-brand-olive transition"
               >
                 コース・料金
+              </button>
+              <button
+                onClick={() => scrollToSection('reviews')}
+                className="text-left py-2.5 border-b border-gray-50 hover:text-brand-olive transition"
+              >
+                会員様のクチコミ
               </button>
               <button
                 onClick={() => { setIsOpen(false); onNavigateToBlog ? onNavigateToBlog() : scrollToSection('blog'); }}
