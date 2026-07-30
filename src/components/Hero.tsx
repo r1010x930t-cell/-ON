@@ -1,6 +1,14 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+
+const TARGET_IMAGE = {
+  url: "https://i.ibb.co/GvHMbGxC/7.png",
+  alt: "Personal Gym ON Training Area"
+};
+
+// 単一画像の無限シームレスロール用
+const LOOP_IMAGES = [TARGET_IMAGE, TARGET_IMAGE];
 
 export default function Hero() {
   const handleScrollToContact = () => {
@@ -20,23 +28,42 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-16 md:py-24">
-      {/* Background Image with elegant modern styling */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://i.ibb.co/60FLpyQz/l-LN-G1bct0ao3-Bg-QK7s-EC323pd9-S9tu-G1-VNZgh-MBKv2-FAqmb-dg-Zd-Z7-KLIet-Ri0o4-Ycj-Tm-FJ7-E81-Lm-So-TPx-FJFz.jpg"
-          alt="Personal Gym ON Lounge"
-          className="w-full h-full object-cover object-center scale-105 filter brightness-95"
-          referrerPolicy="no-referrer"
-        />
-        {/* Modern high-contrast elegant overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent md:bg-gradient-to-r md:from-white/90 md:via-white/75 md:to-white/10"></div>
-        {/* Soft atmospheric radial gradient for luxury feel */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(209,250,229,0.15),transparent_60%)]"></div>
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-16 md:py-24 select-none">
+      {/* Background Continuous Seamless Roll Carousel */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <motion.div
+          className="flex h-full w-[200vw]"
+          animate={{ x: ['0vw', '-100vw'] }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: 'loop',
+              duration: 25, // 25 seconds for continuous seamless roll
+              ease: 'linear',
+            },
+          }}
+        >
+          {LOOP_IMAGES.map((image, index) => (
+            <div key={index} className="w-[100vw] h-full flex-shrink-0 relative">
+              <img 
+                src={image.url}
+                alt={image.alt}
+                className="w-full h-full object-cover object-center filter brightness-95"
+                referrerPolicy="no-referrer"
+                draggable={false}
+              />
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Modern lighter overlay for clearer background photo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/50 to-transparent md:bg-gradient-to-r md:from-white/75 md:via-white/40 md:to-transparent z-10 pointer-events-none"></div>
+        {/* Soft atmospheric radial gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(209,250,229,0.1),transparent_60%)] z-10 pointer-events-none"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-        <div className="max-w-2xl text-left space-y-6 md:space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20 pointer-events-none">
+        <div className="max-w-2xl text-left space-y-6 md:space-y-8 pointer-events-auto">
           
           {/* Tagline */}
           <motion.div 
@@ -48,7 +75,7 @@ export default function Hero() {
             <Sparkles className="w-3.5 h-3.5 text-brand-olive fill-current" />
             <span>茂原市のマンツーマンフィットネス</span>
           </motion.div>
- 
+
           {/* Main Copy */}
           <div className="space-y-4">
             <motion.h1 
@@ -74,7 +101,7 @@ export default function Hero() {
               寝起きのままでも、ラフな格好でも、なんでもOK。とにかく来てくれたら、あとはこちらにお任せください。楽しく身体を変えていきましょう！
             </motion.p>
           </div>
- 
+
           {/* Action Button */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -99,7 +126,7 @@ export default function Hero() {
       </div>
 
       {/* Elegant visual indicator for scroll */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-gray-400 text-xs font-semibold select-none opacity-60">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-gray-400 text-xs font-semibold select-none opacity-60 z-20 pointer-events-none">
         <span className="tracking-widest rotate-90 inline-block mb-2 font-mono">SCROLL</span>
         <div className="w-[1.5px] h-12 bg-gray-200 relative overflow-hidden rounded-full">
           <div className="absolute top-0 left-0 w-full h-1/2 bg-brand-olive rounded-full animate-[bounce_1.5s_infinite]"></div>
@@ -108,3 +135,4 @@ export default function Hero() {
     </section>
   );
 }
+
