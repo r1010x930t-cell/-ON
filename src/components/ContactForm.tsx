@@ -101,7 +101,7 @@ export default function ContactForm() {
               </div>
             </div>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-8 space-y-3">
               <a 
                 href="tel:07035230189" 
                 className="w-full bg-brand-olive hover:bg-brand-dark text-white font-bold py-4 px-6 rounded-full transition-all duration-200 flex items-center justify-center gap-2 shadow-xs hover:shadow-md cursor-pointer"
@@ -109,10 +109,15 @@ export default function ContactForm() {
                 <Phone className="w-5 h-5" />
                 <span className="font-mono text-base tracking-wide">070-3523-0189</span>
               </a>
-              <p className="text-[10px] text-gray-400 font-semibold leading-normal flex items-start gap-1.5 justify-center max-w-xs mx-auto text-left">
-                <ShieldAlert className="w-3.5 h-3.5 text-brand-accent shrink-0 mt-0.5" />
-                <span>トレーニング指導中はお電話に出られない場合がございます。その際はLINEをお試しいただくか、留守電にメッセージをお願いいたします。</span>
-              </p>
+              <div className="space-y-2">
+                <p className="text-[10px] text-gray-400 font-semibold leading-normal flex items-start gap-1.5 justify-center max-w-xs mx-auto text-left">
+                  <ShieldAlert className="w-3.5 h-3.5 text-brand-accent shrink-0 mt-0.5" />
+                  <span>トレーニング指導中はお電話に出られない場合がございます。その際はLINEをお試しいただくか、留守電にメッセージをお願いいたします。</span>
+                </p>
+                <p className="text-[11px] text-rose-600 font-bold leading-normal text-center bg-rose-50/80 border border-rose-200/60 rounded-xl py-2 px-3">
+                  ※営業のご連絡はInstagramのDMのみとなっております。
+                </p>
+              </div>
             </div>
           </motion.div>
 
