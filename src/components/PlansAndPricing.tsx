@@ -39,7 +39,7 @@ export default function PlansAndPricing() {
             className="bg-white rounded-3xl p-8 border border-brand-olive/15 shadow-md shadow-brand-olive/5 relative overflow-hidden flex flex-col justify-between"
           >
             {/* Limit Badge */}
-            <div className="absolute -right-12 top-6 bg-brand-accent text-white text-[11px] font-bold py-1 px-12 rotate-45 text-center shadow-xs">
+            <div className="absolute -right-14 top-6 bg-brand-accent text-white text-[11px] font-bold py-1 px-14 rotate-45 text-center shadow-xs">
               当日入会で0円
             </div>
 
@@ -95,11 +95,16 @@ export default function PlansAndPricing() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xs flex flex-col justify-between"
+            className="bg-white rounded-3xl p-8 border border-brand-olive/15 shadow-md shadow-brand-olive/5 relative overflow-hidden flex flex-col justify-between"
           >
+            {/* Limit Badge */}
+            <div className="absolute -right-14 top-6 bg-brand-accent text-white text-[11px] font-bold py-1 px-14 rotate-45 text-center shadow-xs">
+              当日入会で0円
+            </div>
+
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 text-brand-olive flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-brand-sage text-brand-olive flex items-center justify-center">
                   <Coins className="w-5 h-5" />
                 </div>
                 <div>
@@ -108,13 +113,17 @@ export default function PlansAndPricing() {
                 </div>
               </div>
 
-              <div className="border-b border-gray-100 pb-5 mb-5 space-y-2">
+              <div className="border-b border-gray-100 pb-5 mb-5 space-y-3">
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl md:text-4xl font-serif font-bold text-brand-dark">20,000円</span>
                   <span className="text-xs text-gray-500 font-medium">（税込）</span>
                 </div>
-                <p className="text-xs text-gray-400 font-semibold">
-                  ※継続的なトレーニングをサポートするための基本初期費用です。
+                <div className="bg-brand-sage-light border border-brand-olive/20 px-3.5 py-2 rounded-xl font-bold text-brand-olive text-xs md:text-sm inline-flex items-center gap-1.5 shadow-2xs">
+                  <Sparkles className="w-4 h-4 text-brand-accent shrink-0" />
+                  <span>当日入会で入会金 0円！</span>
+                </div>
+                <p className="text-xs text-gray-400 font-medium pt-1">
+                  ※体験レッスン当日にご入会いただいた場合、入会金が無料となります。
                 </p>
               </div>
 
