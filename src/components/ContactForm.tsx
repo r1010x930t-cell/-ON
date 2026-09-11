@@ -115,7 +115,7 @@ export default function ContactForm() {
                   <span>トレーニング指導中はお電話に出られない場合がございます。その際はLINEをお試しいただくか、留守電にメッセージをお願いいたします。</span>
                 </p>
                 <p className="text-[11px] text-rose-600 font-bold leading-normal text-center bg-rose-50/80 border border-rose-200/60 rounded-xl py-2 px-3">
-                  ※営業のご連絡はInstagramのDMのみとなっております。
+                  ※営業の方はInstagramのDMもしくわ<a href="mailto:personalgym.on@gmail.com" className="underline hover:opacity-80">personalgym.on@gmail.com</a>までお願いします
                 </p>
               </div>
             </div>
