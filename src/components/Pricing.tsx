@@ -73,12 +73,11 @@ export default function Pricing() {
               <div className="text-gray-500 text-xs font-medium bg-brand-sage-light/80 py-1.5 px-3 rounded-full inline-block">
                 {p.perSession}
               </div>
-              <div className="pt-4 flex items-baseline justify-center text-brand-dark">
-                <span className="text-4xl md:text-5xl font-extrabold font-mono tracking-tight">
-                  {p.price}
+              <div className="pt-4 flex items-baseline justify-center text-brand-dark gap-1">
+                <span className="text-4xl md:text-5xl font-serif font-bold tracking-tight">
+                  {p.price}円
                 </span>
-                <span className="text-lg font-bold ml-1">円</span>
-                <span className="text-xs font-semibold text-gray-500 ml-1">（税込）</span>
+                <span className="text-xs font-medium text-gray-500">（税込）</span>
               </div>
             </div>
 

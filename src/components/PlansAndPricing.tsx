@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Gift, CheckCircle2, Coins, Sparkles } from 'lucide-react';
 import Pricing from './Pricing';
+import PlanDiagnosis from './PlanDiagnosis';
 
 export default function PlansAndPricing() {
   return (
@@ -50,7 +51,7 @@ export default function PlansAndPricing() {
                 </div>
                 <div>
                   <h3 className="font-bold text-brand-dark text-lg">体験レッスン</h3>
-                  <p className="text-xs text-brand-olive font-semibold">カウンセリング込み 60分</p>
+                  <p className="text-xs text-brand-olive font-semibold">カウンセリング込み</p>
                 </div>
               </div>
 
@@ -79,7 +80,7 @@ export default function PlansAndPricing() {
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-brand-olive shrink-0 mt-0.5" />
-                  <span>ラフな服装のまま手ぶら感覚で受講可能</span>
+                  <span>完全個室で人目を気にせずリラックス受講</span>
                 </li>
               </ul>
             </div>
@@ -137,8 +138,13 @@ export default function PlansAndPricing() {
 
         </div>
 
+        {/* 3-Second Quick Plan Diagnosis Tool */}
+        <div id="diagnosis" className="scroll-mt-24">
+          <PlanDiagnosis />
+        </div>
+
         {/* Course Plans (Start, Basic, Active) */}
-        <div id="pricing" className="mt-24 relative scroll-mt-24">
+        <div id="pricing" className="mt-16 relative scroll-mt-24">
           <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
             <h3 className="text-2xl md:text-3xl font-serif font-bold text-brand-dark tracking-tight relative inline-block">
               コースのご案内

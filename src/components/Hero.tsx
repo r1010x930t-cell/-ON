@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
+import { trackEvent } from '../lib/analytics';
 
 const TARGET_IMAGE = {
   url: "https://i.ibb.co/GvHMbGxC/7.png",
@@ -9,7 +10,25 @@ const TARGET_IMAGE = {
 
 export default function Hero() {
   const handleScrollToContact = () => {
+    trackEvent('click_trial_cta', { placement: 'hero_main' });
     const element = document.getElementById('contact');
+    if (element) {
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScrollToDiagnosis = () => {
+    trackEvent('click_diagnosis_cta', { placement: 'hero' });
+    const element = document.getElementById('diagnosis');
     if (element) {
       const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
@@ -87,18 +106,26 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2"
           >
             <button
               onClick={handleScrollToContact}
-              className="group bg-brand-olive hover:bg-brand-dark text-white font-bold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-base md:text-lg cursor-pointer"
+              className="group bg-brand-olive hover:bg-brand-dark text-white font-bold px-7 py-3.5 sm:py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-base md:text-lg cursor-pointer"
             >
               <span>まずは体験レッスン</span>
             </button>
+
+            <button
+              onClick={handleScrollToDiagnosis}
+              className="bg-white/90 hover:bg-white text-brand-dark hover:text-brand-olive border border-brand-olive/25 font-bold px-5 py-3.5 sm:py-4 rounded-full shadow-2xs hover:shadow-xs transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base cursor-pointer backdrop-blur-xs"
+            >
+              <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500" />
+              <span>3秒プラン診断</span>
+            </button>
             
-            <div className="flex items-center justify-center gap-2.5 text-xs text-brand-dark/80 font-semibold px-4 py-2">
+            <div className="flex items-center justify-center gap-2 text-xs text-brand-dark/80 font-semibold px-2 py-1">
               <span className="w-2 h-2 rounded-full bg-brand-olive block animate-pulse"></span>
-              <span>完全個室 / 体験レッスン実施中</span>
+              <span>完全個室 / 体験実施中</span>
             </div>
           </motion.div>
 

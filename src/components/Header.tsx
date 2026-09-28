@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Dumbbell, User, Calendar, Instagram, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { trackEvent } from '../lib/analytics';
 
 interface HeaderProps {
   onNavigateToBlog?: () => void;
@@ -79,10 +80,22 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
               トレーナー
             </button>
             <button 
+              onClick={() => scrollToSection('gallery')}
+              className="hover:text-brand-olive transition py-2 cursor-pointer"
+            >
+              施設・設備
+            </button>
+            <button 
               onClick={() => scrollToSection('pricing')}
               className="hover:text-brand-olive transition py-2 cursor-pointer"
             >
               料金
+            </button>
+            <button 
+              onClick={() => scrollToSection('trial-flow')}
+              className="hover:text-brand-olive transition py-2 cursor-pointer"
+            >
+              体験の流れ
             </button>
             <button 
               onClick={() => scrollToSection('reviews')}
@@ -117,6 +130,7 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                 href="https://www.instagram.com/personalgym.on?igsh=ZDVpOG1xMGlsOWp1"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent('click_instagram', { placement: 'header_desktop' })}
                 className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-[#E1306C] hover:border-rose-200 hover:bg-rose-50/50 flex items-center justify-center transition-all duration-200"
                 title="Instagram"
               >
@@ -126,6 +140,7 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                 href="https://lin.ee/TK9IMAU"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent('click_line', { placement: 'header_desktop' })}
                 className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-[#06C755] hover:border-emerald-200 hover:bg-emerald-50/50 flex items-center justify-center transition-all duration-200"
                 title="LINE"
               >
@@ -133,7 +148,10 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
               </a>
             </div>
             <button
-              onClick={() => scrollToSection('contact')}
+              onClick={() => {
+                trackEvent('click_contact_cta', { placement: 'header_desktop' });
+                scrollToSection('contact');
+              }}
               className="bg-brand-olive hover:bg-brand-dark text-white text-xs font-bold px-5 py-3 rounded-full shadow-xs transition duration-200 cursor-pointer"
             >
               ご予約・お問い合わせ
@@ -177,10 +195,31 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                 トレーナー紹介
               </button>
               <button
+                onClick={() => scrollToSection('gallery')}
+                className="text-left py-2.5 border-b border-gray-50 hover:text-brand-olive transition"
+              >
+                施設・設備ギャラリー
+              </button>
+              <button
                 onClick={() => scrollToSection('pricing')}
                 className="text-left py-2.5 border-b border-gray-50 hover:text-brand-olive transition"
               >
                 コース・料金
+              </button>
+              <button
+                onClick={() => scrollToSection('diagnosis')}
+                className="text-left py-2.5 border-b border-gray-50 text-brand-dark hover:text-brand-olive font-bold flex items-center justify-between"
+              >
+                <span>あなたにぴったりのプラン診断</span>
+                <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full font-bold">
+                  3秒無料
+                </span>
+              </button>
+              <button
+                onClick={() => scrollToSection('trial-flow')}
+                className="text-left py-2.5 border-b border-gray-50 hover:text-brand-olive transition"
+              >
+                体験レッスンの流れ
               </button>
               <button
                 onClick={() => scrollToSection('reviews')}
@@ -208,7 +247,10 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
               </button>
               
               <button
-                onClick={() => scrollToSection('contact')}
+                onClick={() => {
+                  trackEvent('click_contact_cta', { placement: 'header_mobile_drawer' });
+                  scrollToSection('contact');
+                }}
                 className="w-full text-center bg-brand-olive hover:bg-brand-dark text-white font-bold py-3.5 rounded-full transition"
               >
                 体験レッスンのご予約はこちら
@@ -219,6 +261,7 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                   href="https://www.instagram.com/personalgym.on?igsh=ZDVpOG1xMGlsOWp1"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent('click_instagram', { placement: 'header_mobile_drawer' })}
                   className="flex items-center gap-2 text-gray-500 hover:text-[#E1306C] transition-colors font-semibold text-xs"
                 >
                   <Instagram className="w-5 h-5" />
@@ -228,6 +271,7 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
                   href="https://lin.ee/TK9IMAU"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent('click_line', { placement: 'header_mobile_drawer' })}
                   className="flex items-center gap-2 text-gray-500 hover:text-[#06C755] transition-colors font-semibold text-xs"
                 >
                   <MessageCircle className="w-5 h-5 fill-current" />

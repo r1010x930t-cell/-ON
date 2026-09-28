@@ -91,7 +91,7 @@ export default function FAQ() {
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-2">
             お客様からよくいただくご質問をまとめました。<br className="hidden sm:inline" />
-            この他にも気になる点やご不安なことがございましたら、お気軽にLINEやフォームからお問い合わせください。
+            この他にも気になる点やご不安なことがございましたら、お気軽に公式LINEまたはお電話からお問い合わせください。
           </p>
         </div>
 

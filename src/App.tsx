@@ -3,17 +3,32 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Trainers from './components/Trainers';
+import Gallery from './components/Gallery';
 import PlansAndPricing from './components/PlansAndPricing';
+import TrialFlow from './components/TrialFlow';
 import Reviews from './components/Reviews';
 import Blog from './components/Blog';
 import BlogPage from './components/BlogPage';
 import Access from './components/Access';
-import ContactForm from './components/ContactForm';
+import BookingSystem from './components/BookingSystem';
 import FAQ from './components/FAQ';
 import { Instagram, MessageCircle } from 'lucide-react';
+import { initAnalytics, trackPageView, trackEvent } from './lib/analytics';
 
 export default function App() {
   const [view, setView] = useState<'home' | 'blog'>('home');
+
+  useEffect(() => {
+    initAnalytics();
+  }, []);
+
+  useEffect(() => {
+    if (view === 'blog') {
+      trackPageView('/blog', 'スタッフブログ｜パーソナルジムON');
+    } else {
+      trackPageView('/', 'パーソナルジムON｜千葉県茂原市の完全プライベートジム');
+    }
+  }, [view]);
 
   useEffect(() => {
     const checkRoute = () => {
@@ -73,11 +88,17 @@ export default function App() {
         {/* Trainers Panel */}
         <Trainers />
 
+        {/* Facility & Equipment Gallery */}
+        <Gallery />
+
         {/* Plans & Pricing Section */}
         <PlansAndPricing />
 
-        {/* Contacting Form & Success modal */}
-        <ContactForm />
+        {/* Flow & Guide for First-Time Trial Lesson */}
+        <TrialFlow />
+
+        {/* Contact & Web Reservation System */}
+        <BookingSystem />
 
         {/* Member Reviews */}
         <Reviews />
@@ -109,6 +130,7 @@ export default function App() {
                     href="https://www.instagram.com/personalgym.on?igsh=ZDVpOG1xMGlsOWp1"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent('click_instagram', { placement: 'footer' })}
                     className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200"
                     title="Instagram"
                   >
@@ -118,6 +140,7 @@ export default function App() {
                     href="https://lin.ee/TK9IMAU"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent('click_line', { placement: 'footer' })}
                     className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-200"
                     title="LINE"
                   >
@@ -130,8 +153,10 @@ export default function App() {
             <div className="flex flex-wrap justify-center gap-6 text-sm text-emerald-100/90 font-medium">
               <a href="#features" className="hover:text-amber-300 transition">特徴</a>
               <a href="#trainers" className="hover:text-amber-300 transition">トレーナー</a>
-              <a href="#reviews" className="hover:text-amber-300 transition">クチコミ</a>
+              <a href="#gallery" className="hover:text-amber-300 transition">施設・設備</a>
               <a href="#pricing" className="hover:text-amber-300 transition">料金</a>
+              <a href="#trial-flow" className="hover:text-amber-300 transition">体験の流れ</a>
+              <a href="#reviews" className="hover:text-amber-300 transition">クチコミ</a>
               <a href="#contact" className="hover:text-amber-300 transition">ご予約</a>
               <button onClick={handleNavigateToBlog} className="hover:text-amber-300 transition cursor-pointer">ブログ</button>
               <a href="#access" className="hover:text-amber-300 transition">アクセス</a>

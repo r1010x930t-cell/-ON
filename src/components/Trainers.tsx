@@ -20,7 +20,7 @@ export default function Trainers() {
       name: '橋本（はしもと）',
       role: 'パーソナルトレーナー / セラピスト',
       birthplace: '',
-      image: 'https://i.ibb.co/BVV2XLs5/60548381-15-C0-4522-9-E77-B858-E932-B854.png',
+      image: 'https://i.ibb.co/spYv1YyK/IMG-0855.jpg',
       tags: [
         'JCCA認定RS7アドバンストトレーナー',
         'リラクゼーションセラピスト',
