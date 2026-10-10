@@ -78,15 +78,19 @@ export default function TrialFlow() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-          <span className="text-brand-olive font-bold text-xs uppercase tracking-widest bg-brand-sage px-3.5 py-1.5 rounded-full inline-block shadow-2xs">
-            Trial Flow ＆ Guide
-          </span>
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+            <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+              Trial Flow
+            </span>
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-dark tracking-tight">
             体験レッスン 当日の流れ
           </h2>
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-3"></div>
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-2 font-medium">
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-3 font-medium">
             「どんなことをするの？」「きつくない？」と不安な方もご安心ください。<br className="hidden sm:inline" />
             運動初心者の方でも笑顔で楽しめる、当日のステップをご紹介します。
           </p>

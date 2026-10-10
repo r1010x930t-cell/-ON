@@ -149,11 +149,11 @@ export default function PlanDiagnosis() {
         planName: '月12回コース（週3回）',
         badge: '最速で結果を出したい方へ',
         frequency: '週3回（月12回）',
-        monthlyPrice: '84,000円',
-        perSessionPrice: '7,000円 / 回',
+        monthlyPrice: '85,800円',
+        perSessionPrice: '7,150円 / 回',
         matchScore: 96,
         headline: '短期間で圧倒的な変化を目指すあなたに最適！',
-        description: '1回あたり7,000円と最もお得な単価で、手厚いマンツーマントレーニングを受けられます。集中して取り組むことで、最速で理想のボディラインを手に入れることができます。',
+        description: '1回あたり7,150円と最もお得な単価で、手厚いマンツーマントレーニングを受けられます。集中して取り組むことで、最速で理想のボディラインを手に入れることができます。',
         recommendedFor: [
           '短期集中で確実な成果を出したい方',
           '筋力アップ・本格的なボディメイクを目指す方',
@@ -165,8 +165,8 @@ export default function PlanDiagnosis() {
         planName: '月8回コース（週2回）',
         badge: '★ 当店人気No.1 ★',
         frequency: '週2回（月8回）',
-        monthlyPrice: '60,000円',
-        perSessionPrice: '7,500円 / 回',
+        monthlyPrice: '59,400円',
+        perSessionPrice: '7,425円 / 回',
         matchScore: 98,
         headline: '効果の実感と続けやすさのベストバランス！',
         description: '運動効果が最も出やすく、リバウンド防止と身体の引き締まりを実感しやすい王道プランです。ONに通われる会員様の多くがこのプランで楽しく成果を出しています。',
@@ -181,8 +181,8 @@ export default function PlanDiagnosis() {
         planName: '月4回コース（週1回）',
         badge: 'マイペースに続けたい方へ',
         frequency: '週1回（月4回）',
-        monthlyPrice: '32,000円',
-        perSessionPrice: '8,000円 / 回',
+        monthlyPrice: '30,800円',
+        perSessionPrice: '7,700円 / 回',
         matchScore: 95,
         headline: '忙しい日常と両立できる、無理のない習慣化プラン！',
         description: '週に1回、ご自身のペースで身体をリセット。仕事や家事で忙しい方でも無理なく通え、運動習慣を心地よく定着させることができます。',
@@ -229,6 +229,13 @@ export default function PlanDiagnosis() {
 
       {/* Header Banner */}
       <div className="text-center max-w-xl mx-auto mb-8 space-y-2">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <span className="w-6 h-px bg-brand-olive/30"></span>
+          <span className="text-xs font-medium tracking-[0.28em] uppercase text-brand-olive">
+            Plan Diagnosis
+          </span>
+          <span className="w-6 h-px bg-brand-olive/30"></span>
+        </div>
         <div className="inline-flex items-center gap-1.5 bg-amber-100/80 text-amber-900 border border-amber-300/60 px-3.5 py-1 rounded-full text-xs font-bold shadow-2xs">
           <Sparkles className="w-3.5 h-3.5 text-amber-600" />
           <span>3秒かんたん・無料</span>
@@ -236,7 +243,7 @@ export default function PlanDiagnosis() {
         <h3 className="text-2xl sm:text-3xl font-serif font-bold text-brand-dark tracking-tight">
           あなたにぴったりのプラン診断
         </h3>
-        <p className="text-xs sm:text-sm text-gray-500 font-medium">
+        <p className="text-xs sm:text-sm text-gray-500 font-medium pt-1">
           たった3つの質問をタップするだけ。あなたの生活スタイルに合う最適プランをご提案します。
         </p>
       </div>

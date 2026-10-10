@@ -105,17 +105,21 @@ export default function BlogPage({ onNavigateToHome }: BlogPageProps) {
               className="space-y-8"
             >
               {/* Blog Title Header */}
-              <div className="text-center space-y-3">
-                <span className="text-brand-olive font-extrabold text-[10px] uppercase tracking-widest bg-brand-sage px-3 py-1 rounded-full inline-block">
-                  Official Blog
-                </span>
+              <div className="text-center mb-10">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <span className="w-8 h-px bg-brand-olive/30"></span>
+                  <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+                    Official Blog
+                  </span>
+                  <span className="w-8 h-px bg-brand-olive/30"></span>
+                </div>
                 <h1 className="text-3xl md:text-4xl font-serif font-bold text-brand-dark tracking-tight">
                   スタッフブログ
                 </h1>
-                <p className="text-gray-500 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
+                <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
+                <p className="text-gray-500 text-xs sm:text-sm max-w-md mx-auto leading-relaxed pt-3">
                   茂原市のパーソナルジムONがお届けする、効果的なトレーニング方法、リバウンドしない食事習慣、スタジオからのお知らせなど、役立つ情報をお届けします。
                 </p>
-                <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
               </div>
 
               {/* Filtering tabs */}

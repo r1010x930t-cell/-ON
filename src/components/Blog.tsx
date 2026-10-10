@@ -58,9 +58,13 @@ export default function Blog({ onNavigateToBlog }: BlogProps) {
       <div className="max-w-md mx-auto px-4 text-center relative z-10">
         
         {/* Compact Section Title */}
-        <span className="text-brand-olive font-bold text-[10px] uppercase tracking-widest bg-brand-sage px-3.5 py-1.5 rounded-full inline-block mb-3.5 shadow-2xs">
-          Staff Blog
-        </span>
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <span className="w-8 h-px bg-brand-olive/30"></span>
+          <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+            Staff Blog
+          </span>
+          <span className="w-8 h-px bg-brand-olive/30"></span>
+        </div>
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-brand-dark tracking-tight">
           スタッフブログ
         </h2>

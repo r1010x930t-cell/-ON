@@ -50,15 +50,19 @@ export default function Reviews() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
-          <span className="text-brand-olive font-bold text-xs uppercase tracking-widest bg-brand-sage px-3.5 py-1 rounded-full inline-block">
-            Member Reviews
-          </span>
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+            <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+              Reviews
+            </span>
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-dark tracking-tight">
             会員様からのクチコミ
           </h2>
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
-          <p className="text-gray-500 text-sm md:text-base max-w-xl mx-auto leading-relaxed pt-2">
+          <p className="text-gray-500 text-sm md:text-base max-w-xl mx-auto leading-relaxed pt-3">
             実際にパーソナルジムONに通われている会員様から、<br className="hidden sm:block" />
             たくさんの嬉しいご感想・お声をいただいています。
           </p>

@@ -81,15 +81,19 @@ export default function FAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Title */}
-        <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
-          <span className="text-brand-olive font-bold text-xs uppercase tracking-widest bg-brand-sage px-3.5 py-1.5 rounded-full inline-block shadow-xs">
-            FAQ
-          </span>
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+            <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+              FAQ
+            </span>
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-dark tracking-tight">
             よくある質問
           </h2>
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-2">
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-3">
             お客様からよくいただくご質問をまとめました。<br className="hidden sm:inline" />
             この他にも気になる点やご不安なことがございましたら、お気軽に公式LINEまたはお電話からお問い合わせください。
           </p>

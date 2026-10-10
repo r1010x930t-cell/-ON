@@ -103,19 +103,23 @@ export default function Gallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
-          <span className="text-brand-olive font-bold text-xs uppercase tracking-widest bg-brand-sage px-3.5 py-1.5 rounded-full inline-block shadow-2xs">
-            Facility & Equipment
-          </span>
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+            <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
+              Gallery
+            </span>
+            <span className="w-8 h-px bg-brand-olive/30"></span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-dark tracking-tight">
             施設・設備ギャラリー
           </h2>
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-3"></div>
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-2 font-medium">
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-3 font-medium">
             自然光と木目が心地よい、完全予約制のプライベート空間。<br className="hidden sm:inline" />
             清潔感あふれるトレーニング環境と充実の設備をご紹介します。
           </p>
-          <div className="inline-flex items-center gap-2 mt-2 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-amber-600" />
             <span>※実際の施設写真は現在準備中（COMING SOON）です</span>
           </div>
