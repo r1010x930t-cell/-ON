@@ -26,6 +26,13 @@ export default function Header({ onNavigateToBlog }: HeaderProps) {
   const scrollToSection = (id: string) => {
     setIsOpen(false);
     
+    if (id === 'trial-flow') {
+      window.dispatchEvent(new CustomEvent('open-trial-flow'));
+    }
+    if (id === 'gallery') {
+      window.dispatchEvent(new CustomEvent('open-gallery'));
+    }
+
     // Delay the scroll to allow the mobile menu close animation (200ms) to completely finish.
     // This prevents layout shifts and scroll cancellation on mobile devices.
     setTimeout(() => {

@@ -1,9 +1,46 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { DoorOpen, ClipboardCheck, Dumbbell, Coffee, Check, Sparkles, ShieldCheck, Car, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  DoorOpen, 
+  ClipboardCheck, 
+  Dumbbell, 
+  Coffee, 
+  Check, 
+  Sparkles, 
+  ShieldCheck, 
+  Car, 
+  MessageCircle,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
 import { trackEvent } from '../lib/analytics';
 
 export default function TrialFlow() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener('open-trial-flow', handleOpen);
+
+    if (window.location.hash === '#trial-flow') {
+      setIsOpen(true);
+    }
+
+    const handleHash = () => {
+      if (window.location.hash === '#trial-flow') {
+        setIsOpen(true);
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+
+    return () => {
+      window.removeEventListener('open-trial-flow', handleOpen);
+      window.removeEventListener('hashchange', handleHash);
+    };
+  }, []);
+
   const steps = [
     {
       step: '01',
@@ -69,8 +106,30 @@ export default function TrialFlow() {
     }
   };
 
+  const handleToggle = () => {
+    const nextState = !isOpen;
+    setIsOpen(nextState);
+    trackEvent('toggle_trial_flow', { action: nextState ? 'open' : 'close' });
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    trackEvent('toggle_trial_flow', { action: 'close' });
+    const element = document.getElementById('trial-flow');
+    if (element) {
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      window.scrollTo({
+        top: elementPosition - offset,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
-    <section id="trial-flow" className="py-24 bg-[#FAFAF8] relative overflow-hidden border-b border-gray-100 scroll-mt-24">
+    <section id="trial-flow" className="py-20 md:py-24 bg-[#FAFAF8] relative overflow-hidden border-b border-gray-100 scroll-mt-24">
       {/* Background ambient accents */}
       <div className="absolute top-10 right-10 w-96 h-96 bg-brand-sage/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-brand-sage-light/60 rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -78,7 +137,7 @@ export default function TrialFlow() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="flex items-center justify-center gap-3 mb-3">
             <span className="w-8 h-px bg-brand-olive/30"></span>
             <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
@@ -92,135 +151,169 @@ export default function TrialFlow() {
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-3"></div>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-3 font-medium">
             「どんなことをするの？」「きつくない？」と不安な方もご安心ください。<br className="hidden sm:inline" />
-            運動初心者の方でも笑顔で楽しめる、当日のステップをご紹介します。
+            運動初心者の方でも笑顔で楽しめる、当日のステップをご案内します。
           </p>
         </div>
 
-        {/* Chronological Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16">
-          {steps.map((s, idx) => {
-            const IconComponent = s.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="bg-white rounded-3xl p-7 sm:p-8 border border-gray-100 shadow-xs hover:shadow-md transition-shadow duration-300 relative flex flex-col justify-between"
-              >
-                <div>
-                  {/* Top Step Header */}
-                  <div className="flex items-center justify-between mb-5">
-                    <span className="text-2xl sm:text-3xl font-serif font-bold text-brand-olive tracking-tight">
-                      STEP {s.step}
-                    </span>
-                    <div className="w-11 h-11 rounded-2xl bg-brand-sage/60 text-brand-olive flex items-center justify-center shadow-2xs">
-                      <IconComponent className="w-5 h-5" />
-                    </div>
-                  </div>
+        {/* Interactive Trigger Button */}
+        <div className="text-center mb-12">
+          <button
+            onClick={handleToggle}
+            className={`group inline-flex items-center gap-3 font-bold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 text-base md:text-lg cursor-pointer ${
+              isOpen
+                ? 'bg-white hover:bg-brand-sage-light text-brand-dark border-2 border-brand-olive/40 hover:border-brand-olive'
+                : 'bg-brand-olive hover:bg-brand-dark text-white'
+            }`}
+          >
+            <Sparkles className={`w-5 h-5 ${isOpen ? 'text-brand-olive' : 'text-amber-300 fill-amber-300'}`} />
+            <span>{isOpen ? '体験レッスンの流れを閉じる' : '体験レッスンの流れを見る（全4ステップ）'}</span>
+            {isOpen ? (
+              <ChevronUp className="w-5 h-5 text-brand-olive group-hover:-translate-y-0.5 transition-transform duration-300" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-white group-hover:translate-y-0.5 transition-transform duration-300" />
+            )}
+          </button>
+          <p className="text-xs text-gray-400 mt-2.5 font-medium">
+            {isOpen ? '※もう一度押すと閉じます' : '※ボタンを押すと当日の詳細なステップが開きます'}
+          </p>
+        </div>
 
-                  {/* Title & Subtitle */}
-                  <div className="space-y-1 mb-4">
-                    <h3 className="text-lg sm:text-xl font-bold text-brand-dark">
-                      {s.title}
-                    </h3>
-                    <p className="text-xs font-semibold text-brand-olive">
-                      {s.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium mb-5">
-                    {s.description}
-                  </p>
-                </div>
-
-                {/* Feature Chips */}
-                <div className="pt-4 border-t border-gray-50 flex flex-wrap gap-2">
-                  {s.tags.map((tag, tIdx) => (
-                    <span
-                      key={tIdx}
-                      className="text-[11px] font-semibold text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg flex items-center gap-1"
+        {/* Expandable Flow Content */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              {/* Chronological Steps Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16 pt-2">
+                {steps.map((s, idx) => {
+                  const IconComponent = s.icon;
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: idx * 0.08 }}
+                      className="bg-white rounded-3xl p-7 sm:p-8 border border-gray-100 shadow-xs hover:shadow-md transition-shadow duration-300 relative flex flex-col justify-between"
                     >
-                      <Check className="w-3 h-3 text-brand-olive shrink-0" />
-                      <span>{tag}</span>
-                    </span>
-                  ))}
+                      <div>
+                        {/* Top Step Header */}
+                        <div className="flex items-center justify-between mb-5">
+                          <span className="text-2xl sm:text-3xl font-serif font-bold text-brand-olive tracking-tight">
+                            STEP {s.step}
+                          </span>
+                          <div className="w-11 h-11 rounded-2xl bg-brand-sage/60 text-brand-olive flex items-center justify-center shadow-2xs">
+                            <IconComponent className="w-5 h-5" />
+                          </div>
+                        </div>
+
+                        {/* Title & Subtitle */}
+                        <div className="space-y-1 mb-4">
+                          <h3 className="text-lg sm:text-xl font-bold text-brand-dark">
+                            {s.title}
+                          </h3>
+                          <p className="text-xs font-semibold text-brand-olive">
+                            {s.subtitle}
+                          </p>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium mb-5">
+                          {s.description}
+                        </p>
+                      </div>
+
+                      {/* Feature Chips */}
+                      <div className="pt-4 border-t border-gray-50 flex flex-wrap gap-2">
+                        {s.tags.map((tag, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="text-[11px] font-semibold text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg flex items-center gap-1"
+                          >
+                            <Check className="w-3 h-3 text-brand-olive shrink-0" />
+                            <span>{tag}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* 2 Reassuring Points Box */}
+              <div className="bg-brand-sage-light/70 border border-brand-olive/15 rounded-3xl p-8 sm:p-10 mb-12 shadow-2xs">
+                <div className="text-center max-w-xl mx-auto mb-8">
+                  <span className="text-xs font-bold text-brand-olive tracking-wider bg-white px-3 py-1 rounded-full shadow-2xs inline-flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>ONが選ばれる安心サポート</span>
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-brand-dark mt-2">
+                    初めての方もリラックスしてお越しいただけます
+                  </h3>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
 
-        {/* 3 Reassuring Points Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="bg-brand-sage-light/70 border border-brand-olive/15 rounded-3xl p-8 sm:p-10 mb-12 shadow-2xs"
-        >
-          <div className="text-center max-w-xl mx-auto mb-8">
-            <span className="text-xs font-bold text-brand-olive tracking-wider bg-white px-3 py-1 rounded-full shadow-2xs inline-flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>ONが選ばれる安心サポート</span>
-            </span>
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-brand-dark mt-2">
-              初めての方もリラックスしてお越しいただけます
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {reassuringPoints.map((item, idx) => {
-              const ItemIcon = item.icon;
-              return (
-                <div key={idx} className="bg-white rounded-2xl p-6 shadow-xs border border-brand-olive/10 space-y-3 text-left">
-                  <div className="w-10 h-10 rounded-xl bg-brand-sage text-brand-olive flex items-center justify-center">
-                    <ItemIcon className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-bold text-sm text-brand-dark">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-gray-500 leading-relaxed font-medium">
-                    {item.desc}
-                  </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  {reassuringPoints.map((item, idx) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <div key={idx} className="bg-white rounded-2xl p-6 shadow-xs border border-brand-olive/10 space-y-3 text-left">
+                        <div className="w-10 h-10 rounded-xl bg-brand-sage text-brand-olive flex items-center justify-center">
+                          <ItemIcon className="w-5 h-5" />
+                        </div>
+                        <h4 className="font-bold text-sm text-brand-dark">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                          {item.desc}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        </motion.div>
+              </div>
 
-        {/* Bottom CTA to Book Trial */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-4"
-        >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4">
-            <button
-              onClick={scrollToContact}
-              className="bg-brand-olive hover:bg-brand-dark text-white font-bold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-base md:text-lg cursor-pointer"
-            >
-              <span>まずは体験レッスンを申し込む</span>
-            </button>
-            <a
-              href="https://lin.ee/TK9IMAU"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent('click_line', { placement: 'trial_flow_cta' })}
-              className="bg-[#06C755] hover:bg-[#05B34C] text-white font-bold px-6 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm md:text-base cursor-pointer"
-            >
-              <MessageCircle className="w-4.5 h-4.5 fill-current" />
-              <span>LINEですぐに日程を相談する</span>
-            </a>
-          </div>
-          <p className="text-xs text-gray-400 font-medium">
-            ※体験レッスン（カウンセリング込）：3,000円（当日入会で0円）
-          </p>
-        </motion.div>
+              {/* Bottom CTA to Book Trial */}
+              <div className="text-center space-y-4 mb-8">
+                <div className="inline-flex flex-col sm:flex-row items-center gap-4">
+                  <button
+                    onClick={scrollToContact}
+                    className="bg-brand-olive hover:bg-brand-dark text-white font-bold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-base md:text-lg cursor-pointer"
+                  >
+                    <span>まずは体験レッスンを申し込む</span>
+                  </button>
+                  <a
+                    href="https://lin.ee/TK9IMAU"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackEvent('click_line', { placement: 'trial_flow_cta' })}
+                    className="bg-[#06C755] hover:bg-[#05B34C] text-white font-bold px-6 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm md:text-base cursor-pointer"
+                  >
+                    <MessageCircle className="w-4.5 h-4.5 fill-current" />
+                    <span>LINEですぐに日程を相談する</span>
+                  </a>
+                </div>
+                <p className="text-xs text-gray-400 font-medium">
+                  ※体験レッスン（カウンセリング込）：3,000円（当日入会で0円）
+                </p>
+              </div>
+
+              {/* Close Button at the bottom */}
+              <div className="text-center pb-4">
+                <button
+                  onClick={handleClose}
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-500 hover:text-brand-dark bg-white border border-gray-200 px-6 py-2.5 rounded-full shadow-2xs hover:shadow-xs transition cursor-pointer"
+                >
+                  <span>体験レッスンの流れを閉じる</span>
+                  <ChevronUp className="w-4 h-4 text-brand-olive" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </section>

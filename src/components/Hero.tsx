@@ -64,15 +64,22 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20 pointer-events-none">
         <div className="max-w-2xl text-left space-y-6 md:space-y-8 pointer-events-auto">
           
-          {/* Tagline */}
+          {/* Taglines & Gym Strength Badge */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-brand-sage border border-brand-olive/10 px-3.5 py-1.5 rounded-full text-brand-olive font-bold text-xs md:text-sm shadow-2xs"
+            className="flex flex-wrap items-center gap-2"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-olive fill-current" />
-            <span>茂原市のマンツーマンフィットネス</span>
+            <div className="inline-flex items-center gap-2 bg-brand-sage border border-brand-olive/10 px-3.5 py-1.5 rounded-full text-brand-olive font-bold text-xs md:text-sm shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-brand-olive fill-current" />
+              <span>茂原市のマンツーマンフィットネス</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 bg-white/90 border border-brand-olive/25 px-3 py-1 rounded-full text-brand-dark font-bold text-xs shadow-2xs backdrop-blur-xs">
+              <span className="w-2 h-2 rounded-full bg-brand-accent"></span>
+              <span className="text-brand-olive font-extrabold">【最大の強み】</span>
+              <span>続けられる高い継続率</span>
+            </div>
           </motion.div>
 
           {/* Main Copy */}
@@ -97,7 +104,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-base sm:text-lg text-gray-700 font-medium leading-relaxed max-w-xl"
             >
-              寝起きのままでも、ラフな格好でも、なんでもOK。とにかく来てくれたら、あとはこちらにお任せください。楽しく身体を変えていきましょう！
+              寝起きのままでも、ラフな格好でも、なんでもOK。ON最大の強みは、運動が苦手な方でも自然と習慣化できる「継続率の高さ」です。とにかく来てくれたら、あとはこちらにお任せください。楽しく身体を変えていきましょう！
             </motion.p>
           </div>
 

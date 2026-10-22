@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, 
@@ -8,21 +8,29 @@ import {
   Upload, 
   Maximize2, 
   Image as ImageIcon, 
+  Images,
   Check, 
   RotateCcw,
-  Building2
+  Building2,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Eye
 } from 'lucide-react';
 import { useGallery, GalleryCategory, GalleryItem } from '../lib/galleryStore';
+import { trackEvent } from '../lib/analytics';
 
 export default function Gallery() {
   const { items, addItem, deleteItem, resetToDefault } = useGallery();
+  const [isOpen, setIsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<GalleryCategory>('すべて');
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
 
   // New photo form states
   const [newTitle, setNewTitle] = useState('');
-  const [newCategory, setNewCategory] = useState<'トレーニング設備' | '完全個室空間' | '更衣スペース' | '外観・駐車場'>('トレーニング設備');
+  const [newCategory, setNewCategory] = useState<'完全個室空間' | '設備' | 'カウンセリング・更衣室' | 'セッション風景' | '外観・駐車場'>('設備');
   const [newDescription, setNewDescription] = useState('');
   const [newImageUrl, setNewImageUrl] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -30,11 +38,103 @@ export default function Gallery() {
   const [successMsg, setSuccessMsg] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const categories: GalleryCategory[] = ['すべて', 'トレーニング設備', '完全個室空間', '更衣スペース', '外観・駐車場'];
+  const allCategories: GalleryCategory[] = [
+    'すべて', 
+    '完全個室空間', 
+    '設備', 
+    'カウンセリング・更衣室', 
+    'セッション風景', 
+    '外観・駐車場'
+  ];
+
+  // Only display categories that currently have items (plus 'すべて')
+  const categories = allCategories.filter((cat) => 
+    cat === 'すべて' || items.some((item) => item.category === cat)
+  );
+
+  // Listen to external open events (from navigation links or hash)
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener('open-gallery', handleOpen);
+
+    if (window.location.hash === '#gallery') {
+      setIsOpen(true);
+    }
+
+    const handleHash = () => {
+      if (window.location.hash === '#gallery') {
+        setIsOpen(true);
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+
+    return () => {
+      window.removeEventListener('open-gallery', handleOpen);
+      window.removeEventListener('hashchange', handleHash);
+    };
+  }, []);
 
   const filteredItems = activeCategory === 'すべて'
     ? items
     : items.filter((item) => item.category === activeCategory);
+
+  // Toggle open/close
+  const handleToggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    trackEvent('toggle_gallery', { action: next ? 'open' : 'close' });
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    trackEvent('toggle_gallery', { action: 'close' });
+    const el = document.getElementById('gallery');
+    if (el) {
+      const offset = 80;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = el.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      window.scrollTo({
+        top: elementPosition - offset,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Lightbox navigation through all photos
+  const currentIdx = selectedItem ? items.findIndex((i) => i.id === selectedItem.id) : -1;
+
+  const handlePrevPhoto = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (currentIdx === -1 || items.length === 0) return;
+    const prevIdx = (currentIdx - 1 + items.length) % items.length;
+    setSelectedItem(items[prevIdx]);
+  }, [currentIdx, items]);
+
+  const handleNextPhoto = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (currentIdx === -1 || items.length === 0) return;
+    const nextIdx = (currentIdx + 1) % items.length;
+    setSelectedItem(items[nextIdx]);
+  }, [currentIdx, items]);
+
+  // Keyboard navigation for Lightbox
+  useEffect(() => {
+    if (!selectedItem) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrevPhoto();
+      } else if (e.key === 'ArrowRight') {
+        handleNextPhoto();
+      } else if (e.key === 'Escape') {
+        setSelectedItem(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedItem, handlePrevPhoto, handleNextPhoto]);
 
   // Handle local image file upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +195,7 @@ export default function Gallery() {
   };
 
   return (
-    <section id="gallery" className="py-24 bg-white relative overflow-hidden scroll-mt-20">
+    <section id="gallery" className="py-20 md:py-24 bg-white relative overflow-hidden scroll-mt-20 border-b border-gray-100">
       {/* Background decoration */}
       <div className="absolute top-1/4 -right-20 w-80 h-80 bg-brand-sage/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
       <div className="absolute bottom-10 -left-20 w-80 h-80 bg-brand-sage-light/60 rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -103,7 +203,7 @@ export default function Gallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="flex items-center justify-center gap-3 mb-3">
             <span className="w-8 h-px bg-brand-olive/30"></span>
             <span className="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-brand-olive">
@@ -119,196 +219,366 @@ export default function Gallery() {
             自然光と木目が心地よい、完全予約制のプライベート空間。<br className="hidden sm:inline" />
             清潔感あふれるトレーニング環境と充実の設備をご紹介します。
           </p>
-          <div className="inline-flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200/80 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>※実際の施設写真は現在準備中（COMING SOON）です</span>
+          <div className="inline-flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200/80 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <span>施設・設備・完全個室 全{items.length}枚 掲載中</span>
           </div>
         </div>
 
-        {/* Category Filter Chips & Admin Trigger */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10">
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {categories.map((cat) => {
-              const count = cat === 'すべて' 
-                ? items.length 
-                : items.filter((i) => i.category === cat).length;
-              const isActive = activeCategory === cat;
-
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
-                    isActive
-                      ? 'bg-brand-olive text-white shadow-xs'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200/80 hover:text-gray-900'
-                  }`}
-                >
-                  <span>{cat}</span>
-                  <span className={`text-[11px] px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-500'
-                  }`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Add / Manage Photos button for owner */}
+        {/* Interactive Open/Close Buttons (Buttons to open all photos) */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-10">
           <button
-            onClick={() => setShowAdminModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-brand-olive bg-brand-sage-light hover:bg-brand-sage border border-brand-olive/20 transition cursor-pointer shadow-2xs"
+            onClick={handleToggle}
+            className={`group inline-flex items-center gap-3 font-bold px-7 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300 text-sm sm:text-base cursor-pointer ${
+              isOpen
+                ? 'bg-white hover:bg-brand-sage-light text-brand-dark border-2 border-brand-olive/40 hover:border-brand-olive'
+                : 'bg-brand-olive hover:bg-brand-dark text-white'
+            }`}
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>写真の追加・管理</span>
+            <Images className={`w-5 h-5 ${isOpen ? 'text-brand-olive' : 'text-amber-300 fill-amber-300'}`} />
+            <span>{isOpen ? '施設・設備写真を閉じる' : `施設・設備写真をすべて開く（全${items.length}枚）`}</span>
+            {isOpen ? (
+              <ChevronUp className="w-5 h-5 text-brand-olive group-hover:-translate-y-0.5 transition-transform duration-300" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-white group-hover:translate-y-0.5 transition-transform duration-300" />
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              if (items.length > 0) {
+                setSelectedItem(items[0]);
+                trackEvent('open_gallery_fullscreen_button');
+              }
+            }}
+            className="inline-flex items-center gap-2 font-bold px-6 py-3.5 rounded-full border-2 border-brand-olive/30 hover:border-brand-olive bg-white hover:bg-brand-sage-light/60 text-brand-dark text-sm sm:text-base shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer"
+          >
+            <Maximize2 className="w-4 h-4 text-brand-olive" />
+            <span>全画面スライドショーで開く</span>
           </button>
         </div>
+        <p className="text-center text-xs text-gray-400 -mt-6 mb-10 font-medium">
+          {isOpen ? '※もう一度押すと閉じます' : '※ボタンを押すと完全個室・器具・更衣スペース等の全写真が開きます'}
+        </p>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          <AnimatePresence mode="popLayout">
-            {filteredItems.map((item, idx) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3, delay: idx * 0.05 }}
-                onClick={() => setSelectedItem(item)}
-                className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
-              >
-                {/* Photo container */}
-                <div className="relative aspect-4/3 overflow-hidden bg-gray-100">
+        {/* Compact Teaser Preview Card when Closed */}
+        {!isOpen && items.length > 0 && (
+          <div 
+            onClick={() => {
+              setIsOpen(true);
+              trackEvent('open_gallery_preview_click');
+            }}
+            className="group max-w-5xl mx-auto bg-gradient-to-b from-[#FAFAF8] to-white rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer text-center"
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4">
+              {items.slice(0, 4).map((item, i) => (
+                <div key={item.id} className="relative aspect-4/3 rounded-2xl overflow-hidden bg-gray-100 shadow-2xs">
                   <img
                     src={item.imageUrl}
                     alt={item.title}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out brightness-[0.88]"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95"
                     loading="lazy"
                   />
-                  
-                  {/* Category Pill Tag */}
-                  <span className="absolute top-3.5 left-3.5 z-10 bg-brand-dark/80 backdrop-blur-xs text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
+                  <div className="absolute inset-0 bg-brand-dark/15 group-hover:bg-brand-dark/5 transition-colors"></div>
+                  <span className="absolute bottom-2 left-2 right-2 text-center text-[10px] sm:text-xs font-bold text-white bg-black/60 backdrop-blur-xs py-1 px-1.5 rounded-lg truncate shadow-xs">
                     {item.category}
                   </span>
-
-                  {/* COMING SOON Top-Right Tag */}
-                  <span className="absolute top-3.5 right-3.5 z-10 bg-black/60 backdrop-blur-md text-white border border-white/30 text-[10px] tracking-widest font-black px-2.5 py-1 rounded-full uppercase shadow-xs">
-                    COMING SOON
-                  </span>
-
-                  {/* COMING SOON Center Watermark Stamp */}
-                  <div className="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-                    <div className="bg-brand-dark/80 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-2xl text-center shadow-xl transform group-hover:scale-105 transition-transform duration-300">
-                      <span className="block font-serif tracking-[0.25em] text-white text-xs sm:text-sm font-black uppercase">
-                        COMING SOON
+                  {i === 3 && items.length > 4 && (
+                    <div className="absolute inset-0 bg-brand-dark/70 backdrop-blur-xs flex flex-col items-center justify-center text-white p-2">
+                      <span className="text-xs sm:text-sm font-bold tracking-wider">
+                        ＋他{items.length - 3}枚
                       </span>
-                      <span className="block text-[9px] text-brand-sage tracking-wider mt-0.5 font-medium">
-                        写真準備中
+                      <span className="text-[10px] text-brand-sage-light mt-0.5 font-medium">
+                        クリックで全写真を開く
                       </span>
                     </div>
-                  </div>
-
-                  {/* Hover Overlay with expand icon */}
-                  <div className="absolute inset-0 bg-brand-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-3 pointer-events-none">
-                    <span className="w-8 h-8 rounded-full bg-white/90 text-brand-dark flex items-center justify-center shadow-md">
-                      <Maximize2 className="w-3.5 h-3.5 text-brand-olive" />
-                    </span>
-                  </div>
+                  )}
                 </div>
+              ))}
+            </div>
 
-                {/* Info Text */}
-                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-bold text-brand-dark mb-1.5 group-hover:text-brand-olive transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
-                  </div>
-                  <div className="pt-3 flex items-center justify-between text-xs text-brand-olive font-semibold">
-                    <span>詳しく見る</span>
-                    <span className="text-gray-300">→</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {filteredItems.length === 0 && (
-          <div className="text-center py-16 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-            <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-gray-500">
-              このカテゴリーには写真がまだ登録されていません。
-            </p>
-            <button
-              onClick={() => setShowAdminModal(true)}
-              className="mt-4 px-4 py-2 bg-brand-olive text-white text-xs font-bold rounded-full cursor-pointer hover:bg-brand-dark transition"
-            >
-              写真を追加する
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                完全個室空間
+              </span>
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                ラック
+              </span>
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                ケーブルマシン
+              </span>
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                体組成測定
+              </span>
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                サブスク
+              </span>
+              <span className="text-xs font-bold text-brand-olive bg-brand-sage-light px-3 py-1 rounded-full">
+                おむかえ
+              </span>
+              <span className="text-xs font-bold text-gray-500 inline-flex items-center gap-1 ml-1 group-hover:text-brand-olive transition-colors">
+                <Eye className="w-3.5 h-3.5" />
+                <span>クリックで写真一覧を開く →</span>
+              </span>
+            </div>
           </div>
         )}
 
+        {/* Expandable Gallery Grid */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+              className="overflow-hidden pt-2"
+            >
+              {/* Category Filter Chips & Admin Trigger */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {categories.map((cat) => {
+                    const count = cat === 'すべて' 
+                      ? items.length 
+                      : items.filter((i) => i.category === cat).length;
+                    const isActive = activeCategory === cat;
+
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveCategory(cat)}
+                        className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                          isActive
+                            ? 'bg-brand-olive text-white shadow-xs'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200/80 hover:text-gray-900'
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`text-[11px] px-1.5 py-0.2 rounded-full ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-500'
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Add / Manage Photos button for owner */}
+                <button
+                  onClick={() => setShowAdminModal(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-brand-olive bg-brand-sage-light hover:bg-brand-sage border border-brand-olive/20 transition cursor-pointer shadow-2xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>写真の追加・管理</span>
+                </button>
+              </div>
+
+              {/* Gallery Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <AnimatePresence mode="popLayout">
+                  {filteredItems.map((item, idx) => (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3, delay: idx * 0.05 }}
+                      onClick={() => setSelectedItem(item)}
+                      className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
+                    >
+                      {/* Photo container */}
+                      <div className="relative aspect-4/3 overflow-hidden bg-gray-100">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out brightness-95 group-hover:brightness-100"
+                          loading="lazy"
+                        />
+                        
+                        {/* Category Pill Tag */}
+                        <span className="absolute top-3.5 left-3.5 z-10 bg-brand-dark/80 backdrop-blur-xs text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
+                          {item.category}
+                        </span>
+
+                        {/* Photo Number Tag */}
+                        <span className="absolute top-3.5 right-3.5 z-10 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs tracking-wider">
+                          No. {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                        </span>
+
+                        {/* Hover Overlay with expand icon */}
+                        <div className="absolute inset-0 bg-brand-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-3 pointer-events-none">
+                          <span className="w-8 h-8 rounded-full bg-white/95 text-brand-dark flex items-center justify-center shadow-md">
+                            <Maximize2 className="w-3.5 h-3.5 text-brand-olive" />
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Info Text */}
+                      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-base sm:text-lg font-bold text-brand-dark mb-1.5 group-hover:text-brand-olive transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed line-clamp-2">
+                            {item.description}
+                          </p>
+                        </div>
+                        <div className="pt-3 flex items-center justify-between text-xs text-brand-olive font-semibold">
+                          <span>拡大して見る</span>
+                          <span className="text-gray-300">→</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+
+              {filteredItems.length === 0 && (
+                <div className="text-center py-16 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                  <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-gray-500">
+                    このカテゴリーには写真がまだ登録されていません。
+                  </p>
+                  <button
+                    onClick={() => setShowAdminModal(true)}
+                    className="mt-4 px-4 py-2 bg-brand-olive text-white text-xs font-bold rounded-full cursor-pointer hover:bg-brand-dark transition"
+                  >
+                    写真を追加する
+                  </button>
+                </div>
+              )}
+
+              {/* Bottom Close Button */}
+              <div className="mt-12 text-center">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs sm:text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all duration-200 cursor-pointer shadow-2xs"
+                >
+                  <ChevronUp className="w-4 h-4 text-brand-olive" />
+                  <span>施設・設備写真を閉じる</span>
+                </button>
+              </div>
+
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
 
-      {/* Lightbox Modal (Zoomed Photo View) */}
+      {/* Enhanced Lightbox Modal with Next / Prev to browse ALL photos */}
       <AnimatePresence>
         {selectedItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs">
+          <div 
+            onClick={() => setSelectedItem(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xs"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="bg-white rounded-3xl overflow-hidden max-w-2xl w-full shadow-2xl relative max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-3xl overflow-hidden max-w-3xl w-full shadow-2xl relative max-h-[92vh] flex flex-col"
             >
+              {/* Close Button */}
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/50 text-white hover:bg-black/70 flex items-center justify-center transition cursor-pointer"
-                title="閉じる"
+                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 text-white hover:bg-black/80 flex items-center justify-center transition cursor-pointer"
+                title="閉じる (Esc)"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="aspect-4/3 w-full bg-black overflow-hidden relative flex items-center justify-center">
+              {/* Photo Area with Nav Buttons */}
+              <div className="aspect-16/10 sm:aspect-16/9 w-full bg-black overflow-hidden relative flex items-center justify-center select-none">
                 <img
                   src={selectedItem.imageUrl}
                   alt={selectedItem.title}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-contain brightness-90"
+                  className="w-full h-full object-contain brightness-95"
                 />
-                {/* Modal COMING SOON Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-black/25">
-                  <div className="border border-white/50 bg-black/75 backdrop-blur-md px-6 py-3 rounded-2xl text-center shadow-2xl">
-                    <span className="block font-serif tracking-[0.3em] text-white text-sm sm:text-base font-bold uppercase">
-                      COMING SOON
-                    </span>
-                    <span className="block text-[10px] text-gray-300 tracking-wider mt-1 font-medium">
-                      実際の施設写真は現在準備中です
-                    </span>
-                  </div>
+
+                {/* Left/Prev Button */}
+                {items.length > 1 && (
+                  <button
+                    onClick={handlePrevPhoto}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition cursor-pointer z-10"
+                    title="前の写真へ (←)"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                )}
+
+                {/* Right/Next Button */}
+                {items.length > 1 && (
+                  <button
+                    onClick={handleNextPhoto}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition cursor-pointer z-10"
+                    title="次の写真へ (→)"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                )}
+
+                {/* Counter Badge */}
+                <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-xs text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs">
+                  {currentIdx + 1} / {items.length}
                 </div>
               </div>
 
-              <div className="p-6 sm:p-8 overflow-y-auto space-y-3">
-                <div className="flex items-center gap-2">
+              {/* Photo Information & Thumbnails */}
+              <div className="p-5 sm:p-6 overflow-y-auto space-y-3">
+                <div className="flex items-center justify-between">
                   <span className="text-xs font-bold bg-brand-sage text-brand-olive px-3 py-1 rounded-full">
                     {selectedItem.category}
                   </span>
+                  <span className="text-xs text-gray-400 font-medium">
+                    ← → キーで前後の写真を切り替え
+                  </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold font-serif text-brand-dark">
+
+                <h3 className="text-lg sm:text-xl font-bold font-serif text-brand-dark">
                   {selectedItem.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
                   {selectedItem.description}
                 </p>
+
+                {/* Thumbnail Strip to jump to any photo */}
+                <div className="pt-3 border-t border-gray-100">
+                  <p className="text-[11px] font-bold text-gray-400 mb-2">すべての写真（全{items.length}枚）：</p>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {items.map((item, idx) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setSelectedItem(item)}
+                        className={`relative w-14 h-11 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                          item.id === selectedItem.id 
+                            ? 'border-brand-olive ring-2 ring-brand-olive/30 scale-105' 
+                            : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-0 right-0 bg-black/70 text-[9px] text-white px-1 font-bold">
+                          {idx + 1}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+                <div className="pt-2 flex items-center justify-between text-xs text-gray-400">
                   <span>完全予約制プライベートジム ON（千葉県茂原市）</span>
                   <button
                     onClick={() => setSelectedItem(null)}
@@ -386,9 +656,10 @@ export default function Gallery() {
                       onChange={(e) => setNewCategory(e.target.value as any)}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-brand-olive"
                     >
-                      <option value="トレーニング設備">トレーニング設備</option>
                       <option value="完全個室空間">完全個室空間</option>
-                      <option value="更衣スペース">更衣スペース</option>
+                      <option value="設備">設備</option>
+                      <option value="カウンセリング・更衣室">カウンセリング・更衣室</option>
+                      <option value="セッション風景">セッション風景</option>
                       <option value="外観・駐車場">外観・駐車場</option>
                     </select>
                   </div>

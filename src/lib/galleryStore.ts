@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react';
-import trainingRoomImg from '../assets/images/facility_training_room_1789996176663.jpg';
-import dumbbellsImg from '../assets/images/facility_dumbbells_1789996188230.jpg';
-import changingRoomImg from '../assets/images/facility_changing_room_1789996201096.jpg';
-import parkingImg from '../assets/images/facility_parking_1789996226980.jpg';
+import privateRoomImg from '../assets/images/facility_private_room_custom.jpg';
+import rackImg from '../assets/images/facility_rack_IMG_1296.jpg';
+import cableImg from '../assets/images/facility_cable_IMG_1297.jpg';
+import inbodyImg from '../assets/images/facility_inbody_IMG_1294.jpg';
+import waterImg from '../assets/images/facility_water_IMG_1293.jpg';
+import skeletonImg from '../assets/images/facility_skeleton_IMG_1299.jpg';
 
-export type GalleryCategory = 'すべて' | 'トレーニング設備' | '完全個室空間' | '更衣スペース' | '外観・駐車場';
+export type GalleryCategory =
+  | 'すべて'
+  | '完全個室空間'
+  | '設備'
+  | 'カウンセリング・更衣室'
+  | 'セッション風景'
+  | '外観・駐車場';
 
 export interface GalleryItem {
   id: string;
   title: string;
-  category: 'トレーニング設備' | '完全個室空間' | '更衣スペース' | '外観・駐車場';
+  category: '完全個室空間' | '設備' | 'カウンセリング・更衣室' | 'セッション風景' | '外観・駐車場';
   description: string;
   imageUrl: string;
   dateAdded?: string;
@@ -20,40 +28,47 @@ export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
     id: 'facility-1',
     title: '完全個室トレーニングエリア',
     category: '完全個室空間',
-    description: '自然光と温かみのある木目を基調としたプライベート空間。他のお客様と重なることなく、あなただけの時間に集中していただけます。',
-    imageUrl: trainingRoomImg,
+    description: '完全プライベートな貸切トレーニング空間。パワーラック、スミスマシン、ケーブルマシン、フリーウェイト、ストレッチ用品まで完備。他人の目を一切気にせず集中できます。',
+    imageUrl: privateRoomImg,
   },
   {
     id: 'facility-2',
-    title: 'マルチファンクショナルラック',
-    category: 'トレーニング設備',
-    description: 'スクワットやベンチプレス、懸垂まで全身を安全に鍛えられる高品質な多機能マシン。初心者から本格的なトレーニングまで対応します。',
-    imageUrl: trainingRoomImg,
+    title: 'ラック',
+    category: '設備',
+    description: '業務用マシンなので安心してトレーニングできます。スクワットやベンチプレスなど全身を安全に鍛えられる多機能マシン。初心者でも怪我なく正しい軌道でトレーニングできます。',
+    imageUrl: rackImg,
   },
   {
     id: 'facility-3',
-    title: 'ダンベル＆フリーウェイト',
-    category: 'トレーニング設備',
-    description: '女性や運動初心者の方でも扱いやすい軽量ダンベルから高重量まで豊富に完備。一人ひとりの体力にぴったりの負荷を細かく調整できます。',
-    imageUrl: dumbbellsImg,
+    title: 'ケーブルマシン',
+    category: '設備',
+    description: '軌道が自由で関節に優しく、あらゆる角度から全身を効率的に鍛えられる高品質なケーブルマシン。女性のヒップアップや二の腕引き締め、姿勢改善にも最適です。',
+    imageUrl: cableImg,
+  },
+  {
+    id: 'facility-4',
+    title: '体組成測定もできます。',
+    category: '設備',
+    description: '高精度な体組成計で体重だけでなく体脂肪率や筋肉量、左右バランスまで測定。科学的なデータに基づいて日々の身体の変化を可視化し、最適なトレーニングをサポートします。',
+    imageUrl: inbodyImg,
   },
   {
     id: 'facility-5',
-    title: '更衣スペース＆パウダーエリア',
-    category: '更衣スペース',
-    description: '清潔で広々としたお着替えスペース。大きめの鏡やハンガーを備え、お仕事帰りやお出かけ前にも安心してお着替えいただけます。',
-    imageUrl: changingRoomImg,
+    title: 'サブスク',
+    category: '設備',
+    description: 'お水のサブスクあります。',
+    imageUrl: waterImg,
   },
   {
     id: 'facility-6',
-    title: '敷地内専用駐車場・外観',
-    category: '外観・駐車場',
-    description: '店舗の目の前に専用駐車場を完備。運転が苦手な方でもストレスなく停められる広々としたスペースでお待ちしております。',
-    imageUrl: parkingImg,
+    title: 'おむかえ',
+    category: '設備',
+    description: 'マスコット骸骨がお待ちしてます。',
+    imageUrl: skeletonImg,
   },
 ];
 
-const STORAGE_KEY = 'on_gym_facility_gallery_v2';
+const STORAGE_KEY = 'on_gym_facility_gallery_v9';
 
 export function getStoredGallery(): GalleryItem[] {
   if (typeof window === 'undefined') return DEFAULT_GALLERY_ITEMS;
@@ -62,7 +77,7 @@ export function getStoredGallery(): GalleryItem[] {
     if (!raw) return DEFAULT_GALLERY_ITEMS;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.filter((item: GalleryItem) => item.id !== 'facility-4' && !item.title?.includes('カウンセリング＆休憩スペース'));
+      return parsed;
     }
     return DEFAULT_GALLERY_ITEMS;
   } catch (e) {

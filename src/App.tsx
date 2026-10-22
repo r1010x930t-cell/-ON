@@ -12,6 +12,7 @@ import BlogPage from './components/BlogPage';
 import Access from './components/Access';
 import BookingSystem from './components/BookingSystem';
 import FAQ from './components/FAQ';
+import FloatingBookingButton from './components/FloatingBookingButton';
 import { Instagram, MessageCircle } from 'lucide-react';
 import { initAnalytics, trackPageView, trackEvent } from './lib/analytics';
 
@@ -68,8 +69,46 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
+  const handleFloatingBookClick = () => {
+    trackEvent('click_floating_booking', { placement: 'floating_button' });
+    if (view === 'blog') {
+      setView('home');
+      window.history.pushState({}, '', window.location.pathname);
+      setTimeout(() => {
+        const element = document.getElementById('contact');
+        if (element) {
+          const offset = 75;
+          const elementRect = element.getBoundingClientRect().top;
+          const elementPosition = window.scrollY + elementRect;
+          const offsetPosition = elementPosition - offset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById('contact');
+      if (element) {
+        const offset = 75;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = window.scrollY + elementRect;
+        const offsetPosition = elementPosition - offset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
   if (view === 'blog') {
-    return <BlogPage onNavigateToHome={handleNavigateToHome} />;
+    return (
+      <>
+        <BlogPage onNavigateToHome={handleNavigateToHome} />
+        <FloatingBookingButton onClick={handleFloatingBookClick} />
+      </>
+    );
   }
 
   return (
@@ -153,9 +192,21 @@ export default function App() {
             <div className="flex flex-wrap justify-center gap-6 text-sm text-emerald-100/90 font-medium">
               <a href="#features" className="hover:text-amber-300 transition">特徴</a>
               <a href="#trainers" className="hover:text-amber-300 transition">トレーナー</a>
-              <a href="#gallery" className="hover:text-amber-300 transition">施設・設備</a>
+              <a 
+                href="#gallery" 
+                onClick={() => window.dispatchEvent(new CustomEvent('open-gallery'))}
+                className="hover:text-amber-300 transition"
+              >
+                施設・設備
+              </a>
               <a href="#pricing" className="hover:text-amber-300 transition">料金</a>
-              <a href="#trial-flow" className="hover:text-amber-300 transition">体験の流れ</a>
+              <a 
+                href="#trial-flow" 
+                onClick={() => window.dispatchEvent(new CustomEvent('open-trial-flow'))}
+                className="hover:text-amber-300 transition"
+              >
+                体験の流れ
+              </a>
               <a href="#reviews" className="hover:text-amber-300 transition">クチコミ</a>
               <a href="#contact" className="hover:text-amber-300 transition">ご予約</a>
               <button onClick={handleNavigateToBlog} className="hover:text-amber-300 transition cursor-pointer">ブログ</button>
@@ -174,6 +225,9 @@ export default function App() {
 
         </div>
       </footer>
+
+      {/* Floating Action Button for Booking Trial */}
+      <FloatingBookingButton onClick={handleFloatingBookClick} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Gift, CheckCircle2, Coins, Sparkles } from 'lucide-react';
+import { Gift, CheckCircle2, Coins, Sparkles, ChevronRight } from 'lucide-react';
 import Pricing from './Pricing';
 import PlanDiagnosis from './PlanDiagnosis';
 
@@ -27,7 +27,7 @@ export default function PlansAndPricing() {
           </h2>
           <div className="w-12 h-[2px] bg-brand-accent mx-auto rounded-full mt-4"></div>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed pt-3">
-            「運動を習慣にしたいけれど、続けられるか不安…」という方も大歓迎です。<br />
+            ON最大の強みは<strong className="text-brand-dark font-bold">「高い継続率」</strong>。無理なく続けられる安心の料金設計です。<br />
             まずはスタジオの雰囲気を感じられる「体験レッスン」からお気軽にお越しください。
           </p>
         </div>
@@ -89,8 +89,31 @@ export default function PlansAndPricing() {
               </ul>
             </div>
 
-            <div className="mt-8 pt-5 border-t border-gray-50 text-[11px] text-gray-400 font-semibold">
-              ※マンツーマン指導のため、1日の枠に限りがございます。ご了承ください。
+            <div className="mt-8 pt-5 border-t border-gray-50 space-y-3">
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-trial-flow'));
+                  const element = document.getElementById('trial-flow');
+                  if (element) {
+                    const offset = 80;
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = element.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    window.scrollTo({
+                      top: elementPosition - offset,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                className="w-full bg-brand-sage hover:bg-brand-sage-light text-brand-dark font-bold text-xs py-2.5 px-4 rounded-xl border border-brand-olive/20 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <span>体験レッスンの当日の流れを見る</span>
+                <ChevronRight className="w-3.5 h-3.5 text-brand-olive" />
+              </button>
+              <p className="text-[11px] text-gray-400 font-semibold text-center">
+                ※マンツーマン指導のため、1日の枠に限りがございます。ご了承ください。
+              </p>
             </div>
           </motion.div>
 
