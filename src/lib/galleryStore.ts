@@ -28,21 +28,21 @@ export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
     id: 'facility-1',
     title: '完全個室トレーニングエリア',
     category: '完全個室空間',
-    description: '完全プライベートな貸切トレーニング空間。パワーラック、スミスマシン、ケーブルマシン、フリーウェイト、ストレッチ用品まで完備。他人の目を一切気にせず集中できます。',
+    description: '完全プライベートな貸切トレーニング空間。パワーラック、ケーブルマシン、フリーウェイト、ストレッチ用品まで完備。他人の目を一切気にせず集中できます。',
     imageUrl: privateRoomImg,
   },
   {
     id: 'facility-2',
     title: 'ラック',
     category: '設備',
-    description: '業務用マシンなので安心してトレーニングできます。スクワットやベンチプレスなど全身を安全に鍛えられる多機能マシン。初心者でも怪我なく正しい軌道でトレーニングできます。',
+    description: 'スクワットやベンチプレスなど全身を安全に鍛えられる多機能マシン。業務用マシンなので初心者の方でも安心してトレーニングできます。',
     imageUrl: rackImg,
   },
   {
     id: 'facility-3',
     title: 'ケーブルマシン',
     category: '設備',
-    description: '軌道が自由で関節に優しく、あらゆる角度から全身を効率的に鍛えられる高品質なケーブルマシン。女性のヒップアップや二の腕引き締め、姿勢改善にも最適です。',
+    description: '軌道が自由で関節に優しく、初心者の方でもあらゆる角度から全身を効率的に鍛えられる高品質なケーブルマシン。女性のヒップアップや二の腕引き締めにも最適です。',
     imageUrl: cableImg,
   },
   {
@@ -68,7 +68,7 @@ export const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
   },
 ];
 
-const STORAGE_KEY = 'on_gym_facility_gallery_v9';
+const STORAGE_KEY = 'on_gym_facility_gallery_v12';
 
 export function getStoredGallery(): GalleryItem[] {
   if (typeof window === 'undefined') return DEFAULT_GALLERY_ITEMS;

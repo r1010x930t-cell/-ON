@@ -641,7 +641,7 @@ export default function Gallery() {
                     type="text"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="例：スミスマシン・アタッチメント"
+                    placeholder="例：ケーブルアタッチメント"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-olive"
                   />
                 </div>
